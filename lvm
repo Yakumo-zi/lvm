@@ -17,6 +17,11 @@ LUA_VERSION_PATH = Path.joinpath(Path.home(), ".lvm")
 CURRENT_VERSION_PATH = Path.joinpath(LUA_VERSION_PATH, "current")
 CONFIG_PATH = Path.joinpath(LUA_VERSION_PATH, "config.json")
 
+BIN = ["lua", "luac"]
+INCLUDE = ["lauxlib.h", "lua.h", "luaconf.h", "lualib.h"]
+LIB = ["liblua.a"]
+MAN1 = ["lua.1", "luac.1"]
+
 
 class config():
     def __init__(self):
@@ -98,7 +103,7 @@ def extract_tar_gz(file_path, extract_path):
         print(f'Extracted {file_path} to {extract_path}')
 
 
-def make_verion_lua(version):
+def install_lua_version(version):
     installed_versions: [str] = cfg.get("installed_versions")
     if version not in installed_versions:
         installed_versions.append(version)
@@ -106,8 +111,22 @@ def make_verion_lua(version):
         devNULL = open(os.devnull, 'wb')
         path = Path.joinpath(LUA_VERSION_PATH, version)
         subprocess.run(["make", "linux"], cwd=path, stdout=devNULL)
-        subprocess.run(["cp", "./src/lua", "./src/luac", "."],
-                       cwd=path, stdout=devNULL)
+        os.makedirs(Path.joinpath(path, "include"))
+        os.makedirs(Path.joinpath(path, "lib"))
+        os.makedirs(Path.joinpath(path, "bin"))
+        os.makedirs(Path.joinpath(path, "man1"))
+        for bin in BIN:
+            shutil.copy(Path.joinpath(path, "src", bin),
+                        Path.joinpath(path, "bin", bin))
+        for include in INCLUDE:
+            shutil.copy(Path.joinpath(path, "src", include),
+                        Path.joinpath(path, "include", include))
+        for lib in LIB:
+            shutil.copy(Path.joinpath(path, "src", lib),
+                        Path.joinpath(path, "lib", lib))
+        for man1 in MAN1:
+            shutil.copy(Path.joinpath(path, "doc", man1),
+                        Path.joinpath(path, "man1", man1))
         subprocess.run(["rm", "-rf", "doc", "Makefile",
                         "src", "README"], cwd=path, stdout=devNULL)
         print(f"Lua {version} installed successfully")
@@ -168,7 +187,7 @@ if __name__ == "__main__":
                 download_lua(version)
                 print("file download successfully")
                 extract_tar_gz(get_lua_version_path(version), LUA_VERSION_PATH)
-                make_verion_lua(version)
+                install_lua_version(version)
                 os.remove(get_lua_version_path(version))
                 set_current_version(version)
             else:
@@ -177,7 +196,7 @@ if __name__ == "__main__":
             if (len(sys.argv) < 3):
                 print("Usage: python main.py init <shell>")
             elif (len(sys.argv) == 3):
-                print("export PATH=$PATH:"+str(CURRENT_VERSION_PATH))
+                print("export PATH=$PATH:"+str(CURRENT_VERSION_PATH)+"/bin")
         elif sys.argv[1] == "list":
             print("Installed versions:")
             for version in installed_versions:
