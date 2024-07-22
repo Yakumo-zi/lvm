@@ -20,6 +20,8 @@ need_to_install = {
 
 class Config():
     def __init__(self):
+        if not LUA_VERSION_PATH.exists():
+            os.makedirs(LUA_VERSION_PATH)
         self.path = CONFIG_PATH
         self.data = {
             "versions": [],
