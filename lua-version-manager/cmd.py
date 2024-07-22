@@ -1,4 +1,5 @@
 import handlers
+import utils
 
 
 class Commands():
@@ -21,8 +22,11 @@ class Commands():
 def show_help_message():
     print("Available commands:")
     for c in cmds:
-        print(f"    {c.command} {c.shorthand}")
+        utils.msg.text(f"    {c.command} {c.shorthand}", color="red")
         print(f"        {c.usage} - {c.description}")
+    print("Note:")
+    print(f"     {utils.star} - Current version")
+    print(f"     {utils.plus} - Installed version")
 
 
 cmds = [

@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Optional
 import json
 import os
+import handlers
 BASE_URL = "https://www.lua.org/ftp/"
 EXTENSION = ".tar.gz"
 LUA_VERSION_PATH = Path.joinpath(Path.home(), ".lvm")
