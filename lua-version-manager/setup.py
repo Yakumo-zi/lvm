@@ -1,4 +1,3 @@
-#!/home/tohsaka/.version-fox/temp/1721491200-1128/python/bin/python
 import cmd
 import sys
 if __name__ == "__main__":

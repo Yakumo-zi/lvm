@@ -46,16 +46,15 @@ class CmdParser():
         self.cmds = cmds
 
     def parse(self, cmd: list):
-        if len(cmd) == 0:
-            return None
-        for c in self.cmds:
-            if c.command == cmd[0] or c.shorthand == cmd[0]:
-                if len(cmd) - 1 != len(c.parameters):
-                    print(f"Usage: {c.usage}")
-                    return None
-                if len(c.parameters) == 0:
-                    return c.handler()
-                return c.handler(*cmd[1:])
-        print("Invalid command")
+        if len(cmd) != 0:
+            for c in self.cmds:
+                if c.command == cmd[0] or c.shorthand == cmd[0]:
+                    if len(cmd) - 1 != len(c.parameters):
+                        print(f"Usage: {c.usage}")
+                        return None
+                    if len(c.parameters) == 0:
+                        return c.handler()
+                    return c.handler(*cmd[1:])
+            print(f"Invalid command <{cmd[0]}>")
         show_help_message()
         return None
